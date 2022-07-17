@@ -8,15 +8,15 @@
         </h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="mobile">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="mobile"
+          v-model="loginForm.mobile"
+          placeholder="请输入姓名"
+          name="mobile"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -32,7 +32,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -55,20 +55,22 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validMobile } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+    // 自定义校验 用户名
+    const validateMobile = (rule, value, callback) => {
+      if (!validMobile(value)) {
         callback(new Error('用户名不能小于6位'))
       } else {
         callback()
       }
     }
+    // 自定义校验 密码 不得小于 6 位 不得大于 10 位
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value.length < 6 || value.length > 10) {
         callback(new Error('密码不能小于6位'))
       } else {
         callback()
@@ -80,8 +82,16 @@ export default {
         password: '123456'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        mobile: [
+          { required: true, message: '请输入手机号不得为空', trigger: ['blur', 'change'] },
+          // { pattern: /^1[3-9]\d{9}$/, message: '请输入正确手机号', trigger: ['blur', 'change'] }
+          { validator: validateMobile, message: '输入手机号为6位', trigger: ['blur', 'change'] }
+
+        ],
+        password: [
+          { required: true, message: '请输入密码不得为空', trigger: ['blur', 'change'] },
+          { validator: validatePassword, mix: 6, max: 10, message: '请输入6-10位的密码', trigger: ['blur', 'change'] }
+        ]
       },
       loading: false,
       passwordType: 'password',
