@@ -36,14 +36,14 @@
           name="password"
           tabindex="2"
           auto-complete="on"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter.native="hLogin"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">来喽</el-button>
+      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="hLogin">来喽</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">账号: 13800000002</span>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+// 导入登录 api
+import { login } from '@/api/user'
 import { validMobile } from '@/utils/validate'
 
 export default {
@@ -117,21 +119,19 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
+    hLogin() {
+      // 兜底校验
+      // 获取数据
+      // 提示用户
       this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+        // 校验不通过 return 中断
+        if (!valid) return
+        this.doLogin()
       })
+    },
+    async doLogin() {
+      const { data: res } = await login(this.loginForm)
+      console.log(res)
     }
   }
 }
