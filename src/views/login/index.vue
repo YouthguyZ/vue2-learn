@@ -130,8 +130,12 @@ export default {
       })
     },
     async doLogin() {
-      const { data: res } = await login(this.loginForm)
-      console.log(res)
+      try {
+        const { data: res } = await login(this.loginForm)
+        console.log('成功的: ', res)
+      } catch (e) {
+        console.log('失败的：', e)
+      }
     }
   }
 }
